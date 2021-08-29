@@ -1,0 +1,82 @@
+<h1>Add Modal</h1>
+
+<div mat-dialog-content>
+  <div [formGroup]="companyInfoForm">
+    <mat-form-field appearance="outline" class="col-3">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col-3">
+      <mat-label>Type of Industry</mat-label>
+      <input matInput formControlName="type" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col-3">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="address" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col-3">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let status of statusOptions" [value]="status">
+          {{ status }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container formArrayName="contacts">
+      <ng-container
+        *ngFor="
+          let contact of companyInfoForm.controls.contacts['controls'];
+          let i = index
+        "
+        [formGroupName]="i"
+      >
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label> Contact's Name</mat-label>
+          <input matInput formControlName="contactName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label>Contact's Phone</mat-label>
+
+          <input matInput type="tel" formControlName="contactPhone" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-3">
+          <mat-label> Contact's Email</mat-label>
+          <input matInput formControlName="contactEmail" />
+        </mat-form-field>
+
+        <button
+          i-bs
+          class="p-3"
+          name="trash"
+          placement="top"
+          ngbTooltip="Delete"
+          (click)="onDelete(i)"
+        ></button>
+      </ng-container>
+    </ng-container>
+
+    <div class="row save-row border-bottom">
+      <button
+        mat-raised-button
+        class="btn btn-secondary btn-lg btn-block p-2"
+        (click)="addContacts()"
+      >
+        <i i-bs name="plus-circle" placement="top" ngbTooltip="Delete"></i>
+        <span class="p-2">Add Contact</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button [mat-dialog-close]="companyInfoForm" cdkFocusInitial>
+    Add
+  </button>
+</div>

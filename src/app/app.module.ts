@@ -8,9 +8,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxBootstrapIconsModule, allIcons } from 'ngx-bootstrap-icons';
-
+import { AddEditModalComponent } from './add-edit-modal/add-edit-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, AddEditModalComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -20,8 +26,16 @@ import { NgxBootstrapIconsModule, allIcons } from 'ngx-bootstrap-icons';
     MatListModule,
     MatButtonModule,
     NgxBootstrapIconsModule.pick(allIcons),
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
+  entryComponents: [AddEditModalComponent],
 })
 export class AppModule {}
