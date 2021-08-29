@@ -6,8 +6,123 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEditModalComponent } from './add-edit-modal/add-edit-modal.component';
+import { of } from 'rxjs';
+
+export interface COMPANIES_DATA {
+  id: number;
+  name: string;
+  type: number;
+  address: number;
+  employees: string[];
+  status: string;
+}
+
+const COMPANIES_DATA = [
+  {
+    id: 1,
+    name: 'Tesla ',
+    type: 'Car Manufacturing',
+    address: '3500 Deer Creek Road',
+    isExpanded: false,
+    employees: [
+      {
+        eName: 'Elon Musk',
+        ePhone: '(678)-362-9873',
+        eEmail: 'Elon.Musk@tesla.com',
+      },
+      {
+        eName: 'Fred Erikson',
+        ePhone: '(404)-917-7804',
+        eEmail: 'Fred.Erikson@tesla.com',
+      },
+      {
+        eName: 'Naruto Uzamaki',
+        ePhone: '(913)-892-9071',
+        eEmail: 'Naruto.Uzamaki@tesla.com',
+      },
+    ],
+    status: 'Researching',
+  },
+  {
+    id: 2,
+    name: 'AMD',
+    type: 'Company Parts',
+    address: '2485 Augustine Road Santa Clara',
+    isExpanded: false,
+    employees: [
+      {
+        eName: 'Lisa Su',
+        ePhone: '(412)-829-2389',
+        eEmail: 'Lisa.Su@amd.com',
+      },
+      {
+        eName: 'Leo Jackson',
+        ePhone: '(910)-829-6739',
+        eEmail: 'Leo.Jackson@amd.com',
+      },
+      {
+        eName: 'Eren Yeager',
+        ePhone: '(921)-894-7831',
+        eEmail: 'Eren.Yeager@amd.com',
+      },
+    ],
+    status: 'Pending Approval',
+  },
+  {
+    id: 3,
+    name: 'Insiten',
+    type: 'Software Company',
+    address: '147 Technology Pkwy STE 200',
+    isExpanded: false,
+    employees: [
+      {
+        eName: 'Adam Trien',
+        ePhone: '(437)-543-8925',
+        eEmail: 'Adam.Trien@insiten.com',
+      },
+      {
+        eName: 'Gentry Ganote',
+        ePhone: '(784)-383-9812',
+        eEmail: 'Gentry.Ganote@insiten.com',
+      },
+      {
+        eName: 'Matt Osher',
+        ePhone: '(734)-894-0912',
+        eEmail: 'Matt.Osher@insiten.com',
+      },
+      {
+        eName: 'Liz Meyers',
+        ePhone: '(836)-745-7514',
+        eEmail: 'Liz.Myers@insiten.com',
+      },
+    ],
+    status: 'Approved',
+  },
+  {
+    id: 4,
+    name: 'Amazon',
+    type: 'Online Retailer',
+    address: '410 Terry Ave N',
+    isExpanded: false,
+    employees: [
+      {
+        eName: 'Jeff Bezos',
+        ePhone: '(217)-327-8734',
+        eEmail: 'Jeff.Bezos@amazon.com',
+      },
+      {
+        eName: 'Andy Jassy',
+        ePhone: '(321)-342-5436',
+        eEmail: 'Andy.Jassey@amazon.com',
+      },
+    ],
+    status: 'Declined',
+  },
+];
 
 @Component({
   selector: 'app-root',
@@ -25,111 +140,14 @@ import { MatPaginator } from '@angular/material/paginator';
   ],
 })
 export class AppComponent {
-  COMPANIES_DATA = [
-    {
-      id: 1,
-      name: 'Tesla ',
-      type: 'Car Manufacturing',
-      address: '3500 Deer Creek Road',
-      isExpanded: false,
-      employees: [
-        {
-          name: 'Elon Musk',
-          phone: '(678)-362-9873',
-          email: 'Elon.Musk@tesla.com',
-        },
-        {
-          name: 'Fred Erikson',
-          phone: '(404)-917-7804',
-          email: 'Fred.Erikson@tesla.com',
-        },
-        {
-          name: 'Naruto Uzamaki',
-          phone: '(913)-892-9071',
-          email: 'Naruto.Uzamaki@tesla.com',
-        },
-      ],
-      status: 'Researching',
-    },
-    {
-      id: 2,
-      name: 'AMD',
-      type: 'Company Parts',
-      address: '2485 Augustine Road Santa Clara',
-      isExpanded: false,
-      employees: [
-        {
-          name: 'Lisa Su',
-          phone: '(412)-829-2389',
-          email: 'Lisa.Su@amd.com',
-        },
-        {
-          name: 'Leo Jackson',
-          phone: '(910)-829-6739',
-          email: 'Leo.Jackson@amd.com',
-        },
-        {
-          name: 'Eren Yeager',
-          phone: '(921)-894-7831',
-          email: 'Eren.Yeager@amd.com',
-        },
-      ],
-      status: 'Pending Approval',
-    },
-    {
-      id: 3,
-      name: 'Insiten',
-      type: 'Software Company',
-      address: '147 Technology Pkwy STE 200',
-      isExpanded: false,
-      employees: [
-        {
-          name: 'Adam Trien',
-          phone: '(437)-543-8925',
-          email: 'Adam.Trien@insiten.com',
-        },
-        {
-          name: 'Gentry Ganote',
-          phone: '(784)-383-9812',
-          email: 'Gentry.Ganote@insiten.com',
-        },
-        {
-          name: 'Matt Osher',
-          phone: '(734)-894-0912',
-          email: 'Matt.Osher@insiten.com',
-        },
-        {
-          name: 'Liz Meyers',
-          phone: '(836)-745-7514',
-          email: 'Liz.Myers@insiten.com',
-        },
-      ],
-      status: 'Approved',
-    },
-    {
-      id: 4,
-      name: 'Amazon',
-      type: 'Online Retailer',
-      address: '410 Terry Ave N',
-      isExpanded: false,
-      employees: [
-        {
-          name: 'Jeff Bezos',
-          phone: '(217)-327-8734',
-          email: 'Jeff.Bezos@amazon.com',
-        },
-        {
-          name: 'Andy Jassy',
-          phone: '(321)-342-5436',
-          email: 'Andy.Jassey@amazon.com',
-        },
-      ],
-      status: 'Declined',
-    },
-  ];
+  constructor(public dialog: MatDialog) {}
+  responseToPush = {};
+
   isTableExpanded = false;
   dataofCompanies = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table: MatTable<COMPANIES_DATA>;
+
   companyColumns: string[] = [
     'id',
     'name',
@@ -141,9 +159,34 @@ export class AppComponent {
   ];
 
   ngOnInit() {
-    this.dataofCompanies.data = this.COMPANIES_DATA;
+    this.dataofCompanies.data = [...COMPANIES_DATA];
     this.dataofCompanies.paginator = this.paginator;
   }
+
+  onAddEdit() {
+    let dialogRef = this.dialog.open(AddEditModalComponent, {
+      data: {},
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      this.dataofCompanies.data.push({
+        id: COMPANIES_DATA.length + 1,
+        name: result.controls.name.value,
+        type: result.controls.type.value,
+        address: result.controls.address.value,
+        isExpanded: false,
+        employees: [
+          { eName: result.controls.contacts.controls[0].value.contactName },
+          { ePhone: result.controls.contacts.controls[0].value.contactPhone },
+        ],
+        status: result.controls.status.value,
+      });
+      this.dataofCompanies.data = this.dataofCompanies.data;
+    });
+
+    this.table.renderRows();
+  }
+
   toggleTableRows() {
     this.isTableExpanded = !this.isTableExpanded;
 

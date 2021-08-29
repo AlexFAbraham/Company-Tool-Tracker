@@ -1,10 +1,14 @@
 <div class="background">
   <div class="p-20 m-50 container">
     <h1 class="text-center">Company Tool Tracker</h1>
-
-    <button mat-flat-button>Add</button>
-    <button mat-raised-button (click)="toggleTableRows()">Expand All</button>
-
+    <div class="pb-2">
+      <div class="d-flex justify-content-between">
+        <button mat-raised-button (click)="onAddEdit()">Add</button>
+        <button mat-raised-button (click)="toggleTableRows()">
+          Expand All
+        </button>
+      </div>
+    </div>
     <table mat-table [dataSource]="dataofCompanies" multiTemplateDataRows>
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -78,9 +82,9 @@
             <mat-list>
               <div mat-subheader>{{ element.name }}'s Contacts</div>
               <mat-list-item *ngFor="let employee of element.employees">
-                <div mat-line>{{ employee.name }}</div>
+                <div mat-line>{{ employee.eName }}</div>
                 <div mat-line>
-                  {{ employee.phone }} | email: {{ employee.email }}
+                  {{ employee.ePhone }} | email: {{ employee.eEmail }}
                 </div>
               </mat-list-item>
             </mat-list>
