@@ -23,9 +23,9 @@ export interface DialogData {
 })
 export class AddEditModalComponent implements OnInit {
   statusOptions = ['Researching', 'Pending Approval', 'Approved', 'Declined'];
-
   listContacts: any[] = [];
   companyInfoForm: any;
+  firstAdd: boolean = false;
   constructor(
     public dialogRef: MatDialogRef<AddEditModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -50,8 +50,10 @@ export class AddEditModalComponent implements OnInit {
     // contactName: this.data?.contactName[0] || new FormControl([]),
     // contactPhone: this.data?.contactPhone[0] || new FormControl([]),
     // contactEmail: this.data?.contactEmail[0] || new FormControl([]),
-    console.log(this.companyInfoForm.value.contact);
-    this.companyInfoForm.setCon;
+    console.log(this.listContacts.length);
+    if (this.companyInfoForm.value.name) {
+      this.populateContacts();
+    }
   }
 
   onCancel(): void {
@@ -60,19 +62,39 @@ export class AddEditModalComponent implements OnInit {
 
   addContacts(): void {
     const contactsForm = this.formBuilder.group({
-      contactName: this.data?.contactName || [],
-      contactPhone: this.data?.contactPhone || [],
-      contactEmail: this.data?.contactEmail || [],
+      contactName: [],
+      contactPhone: [],
+      contactEmail: [],
     });
+
     (<FormArray>this.companyInfoForm.get('contacts')).push(contactsForm);
 
     this.listContacts.push(this.listContacts.length);
-    // console.log(this.listContacts);
+
+    if (this.companyInfoForm.get('contacts').length === 2 && !this.firstAdd) {
+      (<FormArray>this.companyInfoForm.get('contacts')).removeAt(0);
+      this.firstAdd = true;
+    }
   }
 
   onDelete(index: any): void {
     let listArray = this.companyInfoForm.get('contacts') as FormArray;
     listArray.removeAt(index);
+  }
+
+  populateContacts(): void {
+    for (const row in this.data.contactName) {
+      const contactsForm = this.formBuilder.group({
+        contactName: [this.data.contactName[row]],
+        contactPhone: [this.data.contactPhone[row]],
+        contactEmail: [this.data.contactEmail[row]],
+      });
+
+      (<FormArray>this.companyInfoForm.get('contacts')).push(contactsForm);
+    }
+    this.listContacts.push(this.listContacts.length);
+
+    (<FormArray>this.companyInfoForm.get('contacts')).removeAt(0);
   }
 
   get contactControls() {

@@ -34,30 +34,32 @@
         "
         [formGroupName]="i"
       >
-        <mat-form-field appearance="outline" class="col-4">
-          <mat-label> Contact's Name</mat-label>
-          <input matInput formControlName="contactName" />
-        </mat-form-field>
+        <ng-container *ngIf="listContacts.length">
+          <mat-form-field appearance="outline" class="col-4">
+            <mat-label> Contact's Name</mat-label>
+            <input matInput formControlName="contactName" />
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" class="col-4">
-          <mat-label>Contact's Phone</mat-label>
+          <mat-form-field appearance="outline" class="col-4">
+            <mat-label>Contact's Phone</mat-label>
 
-          <input matInput type="tel" formControlName="contactPhone" />
-        </mat-form-field>
+            <input matInput type="tel" formControlName="contactPhone" />
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" class="col-3">
-          <mat-label> Contact's Email</mat-label>
-          <input matInput formControlName="contactEmail" />
-        </mat-form-field>
+          <mat-form-field appearance="outline" class="col-3">
+            <mat-label> Contact's Email</mat-label>
+            <input matInput formControlName="contactEmail" />
+          </mat-form-field>
 
-        <button
-          i-bs
-          class="p-3"
-          name="trash"
-          placement="top"
-          ngbTooltip="Delete"
-          (click)="onDelete(i)"
-        ></button>
+          <button
+            i-bs
+            class="p-3"
+            name="trash"
+            placement="top"
+            ngbTooltip="Delete"
+            (click)="onDelete(i)"
+          ></button>
+        </ng-container>
       </ng-container>
     </ng-container>
 
