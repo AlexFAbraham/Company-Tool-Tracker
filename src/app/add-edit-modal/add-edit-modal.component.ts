@@ -28,16 +28,16 @@ export class AddEditModalComponent implements OnInit {
   companyInfoForm: any;
   constructor(
     public dialogRef: MatDialogRef<AddEditModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.companyInfoForm = this.formBuilder.group({
-      name: new FormControl(''),
-      type: new FormControl(''),
-      address: new FormControl(''),
-      status: new FormControl(''),
+      name: this.data?.name || new FormControl(''),
+      type: this.data?.type || new FormControl(''),
+      address: this.data?.address || new FormControl(''),
+      status: this.data?.status || new FormControl(''),
       contacts: this.formBuilder.array([
         this.formBuilder.group({
           contactName: new FormControl([]),
@@ -46,6 +46,12 @@ export class AddEditModalComponent implements OnInit {
         }),
       ]),
     });
+
+    // contactName: this.data?.contactName[0] || new FormControl([]),
+    // contactPhone: this.data?.contactPhone[0] || new FormControl([]),
+    // contactEmail: this.data?.contactEmail[0] || new FormControl([]),
+    console.log(this.companyInfoForm.value.contact);
+    this.companyInfoForm.setCon;
   }
 
   onCancel(): void {
@@ -54,9 +60,9 @@ export class AddEditModalComponent implements OnInit {
 
   addContacts(): void {
     const contactsForm = this.formBuilder.group({
-      contactName: ['', Validators.required],
-      contactPhone: ['', Validators.required],
-      contactEmail: ['', Validators.required],
+      contactName: this.data?.contactName || [],
+      contactPhone: this.data?.contactPhone || [],
+      contactEmail: this.data?.contactEmail || [],
     });
     (<FormArray>this.companyInfoForm.get('contacts')).push(contactsForm);
 

@@ -10,7 +10,6 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditModalComponent } from './add-edit-modal/add-edit-modal.component';
-import { of } from 'rxjs';
 
 export interface COMPANIES_DATA {
   id: number;
@@ -207,13 +206,38 @@ export class AppComponent {
       row.isExpanded = this.isTableExpanded;
     });
   }
-  editItem(): void {}
+  editItem(index: any): void {
+    const currentValue = COMPANIES_DATA.filter((row) => row.id === index);
+    console.log(currentValue);
+    const employeesName = [];
+    const employeesPhone = [];
+    const employeesEmail = [];
+
+    for (const numberOfContacts in currentValue[0].employees) {
+      console.log(numberOfContacts);
+      employeesName.push(currentValue[0].employees[numberOfContacts].eName);
+      employeesPhone.push(currentValue[0].employees[numberOfContacts].ePhone);
+      employeesEmail.push(currentValue[0].employees[numberOfContacts].eEmail);
+    }
+    console.log(employeesName);
+
+    let dialogRef = this.dialog.open(AddEditModalComponent, {
+      data: {
+        name: currentValue[0].name,
+        type: currentValue[0].type,
+        address: currentValue[0].address,
+        status: currentValue[0].status,
+        contactName: employeesName,
+        contactPhone: employeesPhone,
+        contactEmail: employeesEmail,
+      },
+    });
+  }
   deleteItem(index: any): void {
     const deleteRowIdx = this.dataofCompanies.data.findIndex(
       (row: any) => row.id === index
     );
 
-    console.log(deleteRowIdx);
     this.dataofCompanies.data.splice(deleteRowIdx, 1);
     this.dataofCompanies.data = this.dataofCompanies.data;
   }
