@@ -164,23 +164,36 @@ export class AppComponent {
   }
 
   onAddEdit() {
-    let dialogRef = this.dialog.open(AddEditModalComponent, {
-      data: {},
-    });
+    let dialogRef = this.dialog.open(AddEditModalComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
       console.log(result);
+
+      const employeeArray = [];
+
+      for (const numberOfContacts in result.controls.contacts.controls) {
+        employeeArray.push({
+          eName:
+            result.controls.contacts.controls[numberOfContacts].value
+              .contactName,
+          ePhone:
+            result.controls.contacts.controls[numberOfContacts].value
+              .contactPhone,
+          eEmail:
+            result.controls.contacts.controls[numberOfContacts].value
+              .contactEmail,
+        });
+      }
+
       this.dataofCompanies.data.push({
         id: COMPANIES_DATA.length + 1,
         name: result.controls.name.value,
         type: result.controls.type.value,
         address: result.controls.address.value,
         isExpanded: false,
-        employees: [
-          { eName: result.controls.contacts.controls[0].value.contactName },
-          { ePhone: result.controls.contacts.controls[0].value.contactPhone },
-        ],
+        employees: employeeArray,
         status: result.controls.status.value,
       });
+
       this.dataofCompanies.data = this.dataofCompanies.data;
     });
 
@@ -195,5 +208,13 @@ export class AppComponent {
     });
   }
   editItem(): void {}
-  deleteItem(): void {}
+  deleteItem(index: any): void {
+    const deleteRowIdx = this.dataofCompanies.data.findIndex(
+      (row: any) => row.id === index
+    );
+
+    console.log(deleteRowIdx);
+    this.dataofCompanies.data.splice(deleteRowIdx, 1);
+    this.dataofCompanies.data = this.dataofCompanies.data;
+  }
 }
