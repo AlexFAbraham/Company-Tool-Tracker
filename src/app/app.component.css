@@ -29,3 +29,25 @@ tr.company-item-row:not(.company-expanded-row):active {
   align-items: center;
   justify-content: center;
 }
+
+.statusResearching {
+  color: orange;
+}
+.statusPendingApproval {
+  color: yellow;
+}
+.statusApproved {
+  color: green;
+}
+.statusDeclined {
+  color: red;
+}
+
+.header {
+  color: #3e4266;
+  font-family: "Trocchi", serif;
+  font-size: 45px;
+  font-weight: normal;
+  line-height: 48px;
+  margin: 0;
+}

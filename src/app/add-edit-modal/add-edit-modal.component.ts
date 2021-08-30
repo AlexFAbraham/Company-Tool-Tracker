@@ -22,22 +22,32 @@ export interface DialogData {
   styleUrls: ['./add-edit-modal.component.css'],
 })
 export class AddEditModalComponent implements OnInit {
+  addEditHeader: string;
+  isNameDisabled: boolean = false;
   statusOptions = ['Researching', 'Pending Approval', 'Approved', 'Declined'];
-
   listContacts: any[] = [];
   companyInfoForm: any;
+  firstAdd: boolean = false;
   constructor(
     public dialogRef: MatDialogRef<AddEditModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.companyInfoForm = this.formBuilder.group({
-      name: new FormControl(''),
-      type: new FormControl(''),
-      address: new FormControl(''),
-      status: new FormControl(''),
+      name:
+        new FormControl(this.data?.name, [Validators.required]) ||
+        new FormControl(''),
+      type:
+        new FormControl(this.data?.type, [Validators.required]) ||
+        new FormControl(''),
+      address:
+        new FormControl(this.data?.address, [Validators.required]) ||
+        new FormControl(''),
+      status:
+        new FormControl(this.data?.status, [Validators.required]) ||
+        new FormControl(''),
       contacts: this.formBuilder.array([
         this.formBuilder.group({
           contactName: new FormControl([]),
@@ -46,6 +56,16 @@ export class AddEditModalComponent implements OnInit {
         }),
       ]),
     });
+
+    this.companyInfoForm.value.name
+      ? ((this.addEditHeader = `Edit ${this.companyInfoForm.value.name}`),
+        this.companyInfoForm.controls['name'].disable(),
+        this.populateContacts(),
+        (this.companyInfoForm = this.companyInfoForm))
+      : (this.addEditHeader = 'Add Company');
+
+    if (this.companyInfoForm.value.name) {
+    }
   }
 
   onCancel(): void {
@@ -54,14 +74,19 @@ export class AddEditModalComponent implements OnInit {
 
   addContacts(): void {
     const contactsForm = this.formBuilder.group({
-      contactName: ['', Validators.required],
-      contactPhone: ['', Validators.required],
-      contactEmail: ['', Validators.required],
+      contactName: [],
+      contactPhone: [],
+      contactEmail: [],
     });
+
     (<FormArray>this.companyInfoForm.get('contacts')).push(contactsForm);
 
     this.listContacts.push(this.listContacts.length);
-    // console.log(this.listContacts);
+
+    if (this.companyInfoForm.get('contacts').length === 2 && !this.firstAdd) {
+      (<FormArray>this.companyInfoForm.get('contacts')).removeAt(0);
+      this.firstAdd = true;
+    }
   }
 
   onDelete(index: any): void {
@@ -69,7 +94,24 @@ export class AddEditModalComponent implements OnInit {
     listArray.removeAt(index);
   }
 
+  populateContacts(): void {
+    for (const row in this.data.contactName) {
+      const contactsForm = this.formBuilder.group({
+        contactName: [this.data.contactName[row]],
+        contactPhone: [this.data.contactPhone[row]],
+        contactEmail: [this.data.contactEmail[row]],
+      });
+
+      (<FormArray>this.companyInfoForm.get('contacts')).push(contactsForm);
+    }
+    this.listContacts.push(this.listContacts.length);
+
+    (<FormArray>this.companyInfoForm.get('contacts')).removeAt(0);
+  }
+
   get contactControls() {
     return (<FormArray>this.companyInfoForm.get('contacts')).controls;
   }
+
+  onSave(): void {}
 }

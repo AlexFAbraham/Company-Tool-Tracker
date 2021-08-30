@@ -15,8 +15,15 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 @NgModule({
-  declarations: [AppComponent, AddEditModalComponent],
+  declarations: [
+    AppComponent,
+    AddEditModalComponent,
+    ConfirmationDialogComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -33,9 +40,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     ReactiveFormsModule,
     MatIconModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [AddEditModalComponent],
+  entryComponents: [AddEditModalComponent, ConfirmationDialogComponent],
 })
 export class AppModule {}
