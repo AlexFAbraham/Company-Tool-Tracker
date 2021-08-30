@@ -10,6 +10,8 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditModalComponent } from './add-edit-modal/add-edit-modal.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface COMPANIES_DATA {
   id: number;
@@ -49,7 +51,7 @@ const COMPANIES_DATA = [
   {
     id: 2,
     name: 'AMD',
-    type: 'Company Parts',
+    type: 'Computer Parts',
     address: '2485 Augustine Road Santa Clara',
     isExpanded: false,
     employees: [
@@ -107,6 +109,7 @@ const COMPANIES_DATA = [
     type: 'Online Retailer',
     address: '410 Terry Ave N',
     isExpanded: false,
+
     employees: [
       {
         eName: 'Jeff Bezos',
@@ -139,11 +142,11 @@ const COMPANIES_DATA = [
   ],
 })
 export class AppComponent {
-  constructor(public dialog: MatDialog) {}
+  constructor(public dialog: MatDialog, private snackBar: MatSnackBar) {}
   responseToPush = {};
 
   isTableExpanded = false;
-  dataofCompanies = new MatTableDataSource();
+  dataofCompanies: any = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatTable) table: MatTable<COMPANIES_DATA>;
 
@@ -157,16 +160,17 @@ export class AppComponent {
     ' ',
   ];
 
+  ngAfterViewInit(): void {
+    this.dataofCompanies.paginator = this.paginator;
+  }
+
   ngOnInit() {
     this.dataofCompanies.data = [...COMPANIES_DATA];
-    this.dataofCompanies.paginator = this.paginator;
   }
 
   onAddEdit() {
     let dialogRef = this.dialog.open(AddEditModalComponent, {});
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
-
       const employeeArray = [];
 
       for (const numberOfContacts in result.controls.contacts.controls) {
@@ -207,38 +211,84 @@ export class AppComponent {
     });
   }
   editItem(index: any): void {
-    const currentValue = COMPANIES_DATA.filter((row) => row.id === index);
-    console.log(currentValue);
+    const currentValue: any = this.dataofCompanies.data.filter(
+      (row: any) => row.id === index
+    );
     const employeesName = [];
     const employeesPhone = [];
     const employeesEmail = [];
 
-    for (const numberOfContacts in currentValue[0].employees) {
-      console.log(numberOfContacts);
+    for (const numberOfContacts in currentValue[0]?.employees) {
       employeesName.push(currentValue[0].employees[numberOfContacts].eName);
       employeesPhone.push(currentValue[0].employees[numberOfContacts].ePhone);
       employeesEmail.push(currentValue[0].employees[numberOfContacts].eEmail);
     }
-    console.log(employeesName);
 
     let dialogRef = this.dialog.open(AddEditModalComponent, {
       data: {
-        name: currentValue[0].name,
-        type: currentValue[0].type,
-        address: currentValue[0].address,
-        status: currentValue[0].status,
+        name: currentValue[0]?.name,
+        type: currentValue[0]?.type,
+        address: currentValue[0]?.address,
+        status: currentValue[0]?.status,
         contactName: employeesName,
         contactPhone: employeesPhone,
         contactEmail: employeesEmail,
       },
     });
-  }
-  deleteItem(index: any): void {
-    const deleteRowIdx = this.dataofCompanies.data.findIndex(
-      (row: any) => row.id === index
-    );
+    dialogRef.afterClosed().subscribe((result) => {
+      const employeeArrayList = [];
+      for (const numberOfContacts in result.value.contacts) {
+        employeeArrayList.push({
+          eName: result.value.contacts[numberOfContacts].contactName,
+          ePhone: result.value.contacts[numberOfContacts].contactPhone,
+          eEmail: result.value.contacts[numberOfContacts].contactEmail,
+        });
+      }
 
-    this.dataofCompanies.data.splice(deleteRowIdx, 1);
-    this.dataofCompanies.data = this.dataofCompanies.data;
+      const replaceRowIdx = this.dataofCompanies.data.findIndex(
+        (row: any) => row.name === result.controls.name.value
+      );
+
+      this.dataofCompanies.data[replaceRowIdx] = {
+        id: this.dataofCompanies.data[replaceRowIdx].id,
+        name: result.controls.name.value,
+        type: result.value.type,
+        address: result.value.address,
+        status: result.value.status,
+        employees: employeeArrayList,
+      };
+
+      this.dataofCompanies.data = this.dataofCompanies.data;
+
+      this.table.renderRows();
+    });
+  }
+
+  deleteItem(index: any): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          cancel: 'Cancel',
+          confirm: 'Delete',
+        },
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const deleteRowIdx = this.dataofCompanies.data.findIndex(
+          (row: any) => row.id === index
+        );
+        const snack = this.snackBar.open('Delete Succesfull', 'close', {
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+
+        this.dataofCompanies.data.splice(deleteRowIdx, 1);
+        this.dataofCompanies.data = this.dataofCompanies.data;
+        this.table.renderRows();
+      }
+    });
   }
 }

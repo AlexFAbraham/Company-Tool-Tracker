@@ -22,6 +22,8 @@ export interface DialogData {
   styleUrls: ['./add-edit-modal.component.css'],
 })
 export class AddEditModalComponent implements OnInit {
+  addEditHeader: string;
+  isNameDisabled: boolean = false;
   statusOptions = ['Researching', 'Pending Approval', 'Approved', 'Declined'];
   listContacts: any[] = [];
   companyInfoForm: any;
@@ -34,10 +36,18 @@ export class AddEditModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.companyInfoForm = this.formBuilder.group({
-      name: this.data?.name || new FormControl(''),
-      type: this.data?.type || new FormControl(''),
-      address: this.data?.address || new FormControl(''),
-      status: this.data?.status || new FormControl(''),
+      name:
+        new FormControl(this.data?.name, [Validators.required]) ||
+        new FormControl(''),
+      type:
+        new FormControl(this.data?.type, [Validators.required]) ||
+        new FormControl(''),
+      address:
+        new FormControl(this.data?.address, [Validators.required]) ||
+        new FormControl(''),
+      status:
+        new FormControl(this.data?.status, [Validators.required]) ||
+        new FormControl(''),
       contacts: this.formBuilder.array([
         this.formBuilder.group({
           contactName: new FormControl([]),
@@ -47,12 +57,14 @@ export class AddEditModalComponent implements OnInit {
       ]),
     });
 
-    // contactName: this.data?.contactName[0] || new FormControl([]),
-    // contactPhone: this.data?.contactPhone[0] || new FormControl([]),
-    // contactEmail: this.data?.contactEmail[0] || new FormControl([]),
-    console.log(this.listContacts.length);
+    this.companyInfoForm.value.name
+      ? ((this.addEditHeader = `Edit ${this.companyInfoForm.value.name}`),
+        this.companyInfoForm.controls['name'].disable(),
+        this.populateContacts(),
+        (this.companyInfoForm = this.companyInfoForm))
+      : (this.addEditHeader = 'Add Company');
+
     if (this.companyInfoForm.value.name) {
-      this.populateContacts();
     }
   }
 
@@ -100,4 +112,6 @@ export class AddEditModalComponent implements OnInit {
   get contactControls() {
     return (<FormArray>this.companyInfoForm.get('contacts')).controls;
   }
+
+  onSave(): void {}
 }
